@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import br.com.liveo.searchliveo.OnSearchListener;
 import br.com.liveo.searchliveo.SearchLiveo;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnSearchListener 
 
     @Override
     public void changedSearch(CharSequence text) {
-
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

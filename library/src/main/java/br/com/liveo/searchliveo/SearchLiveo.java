@@ -380,6 +380,14 @@ public class SearchLiveo extends FrameLayout {
     }
 
     /**
+     * Returns the value typed
+     *
+     */
+    public String queryText(){
+        return mEdtSearch.getText().toString().trim();
+    }
+
+    /**
      * Set a new color for close
      * In his layout.xml you can use the "app:searchLiveoColorClose="@color/..."" attribute
      *
@@ -670,6 +678,12 @@ public class SearchLiveo extends FrameLayout {
                             mContext.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+
+                                    if (mSearchListener != null) {
+                                        mSearchListener.changedSearch(
+                                                getEdtSearch().getText().toString());
+                                    }
+
                                     hideKeybord();
                                 }
                             });
@@ -696,7 +710,7 @@ public class SearchLiveo extends FrameLayout {
     /**
      * Show SearchLiveo
      */
-    public SearchLiveo show() {
+    public void show() {
         setActive(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
@@ -728,7 +742,6 @@ public class SearchLiveo extends FrameLayout {
         }
 
         getEdtSearch().requestFocus();
-        return this;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -799,7 +812,7 @@ public class SearchLiveo extends FrameLayout {
         mViewSearch.setVisibility(View.VISIBLE);
     }
 
-    private SearchLiveo hideAnimation() {
+    private void hideAnimation() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
@@ -872,7 +885,6 @@ public class SearchLiveo extends FrameLayout {
 
         getEdtSearch().setText("");
         mViewSearch.setEnabled(false);
-        return this;
     }
 
     private int getColorPrimaryDark() {
@@ -925,12 +937,14 @@ public class SearchLiveo extends FrameLayout {
     }
 
     public void hideKeybord() {
-        InputMethodManager inputManager = (InputMethodManager) mContext.getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+        if(!mContext.isFinishing()) {
+            InputMethodManager inputMethodManager = (InputMethodManager)
+                    mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        if (mContext.getCurrentFocus() != null && inputManager != null) {
-            inputManager.hideSoftInputFromWindow(mContext.getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
+            if (mContext != null && inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(
+                        mViewSearch.getWindowToken(), 0);
+            }
         }
     }
 
