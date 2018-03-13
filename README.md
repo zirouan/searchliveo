@@ -1,4 +1,4 @@
-# Soon - SearchView-MaterialDesign
+# Under development - SearchView-MaterialDesign
 Library SearchView material design
 <br>
 <br>
