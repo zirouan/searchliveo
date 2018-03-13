@@ -1,0 +1,92 @@
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+*/build/
+build/
+/build
+
+.gradle
+
+# Local configuration file (sdk path, etc)
+local.properties
+/local.properties
+
+# IntelliJ / Android Studio
+.idea
+/.idea
+.idea/
+
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/runConfigurations.xml
+.idea/libraries
+.idea/inspectionProfiles/
+/.idea/vcs.xml
+/.idea/workspace.xml
+/.idea/runConfigurations.xml
+/.idea/libraries
+/.idea/inspectionProfiles/
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/inspectionProfiles/
+/.idea/runConfigurations.xml
+
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+
+*.iml
+
+# Gradle
+.gradle/
+gradle/
+
+.bundle/
+vendor/
+
+key/debug
+key/release
+
+# Eclipse project files
+.classpath
+.project
+
+# DSStore
+.DS_Store
+/release.keystore
+/release.properties
+
+### fastlane ###
+# fastlane - A streamlined workflow tool for Cocoa deployment
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/#source-control
+
+# fastlane specific
+fastlane/report.xml
+
+# deliver temporary files
+fastlane/Preview.html
+
+# snapshot generated screenshots
+fastlane/screenshots/**/*.png
+fastlane/screenshots/screenshots.html
+
+# scan temporary files
+fastlane/test_output
+# End of https://www.gitignore.io/api/fastlane
