@@ -19,7 +19,7 @@ allprojects {
 Step 2 - Add the dependencies:
 
 dependencies {
-  implementation 'com.github.rudsonlive:searchliveo:1.0'
+  implementation 'com.github.rudsonlive:searchliveo:1.0.1'
 }
 ```
 
