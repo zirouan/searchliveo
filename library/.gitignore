@@ -15,8 +15,6 @@ gen/
 build/
 /build
 
-.gradle
-
 # Local configuration file (sdk path, etc)
 local.properties
 /local.properties
@@ -41,18 +39,15 @@ local.properties
 /.idea/inspectionProfiles/
 /.idea/runConfigurations.xml
 
-.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
 /build
 
-*.iml
+.gradle
 
-# Gradle
-.gradle/
-gradle/
+*.iml
 
 .bundle/
 vendor/
