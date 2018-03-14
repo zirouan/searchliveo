@@ -43,21 +43,9 @@ dependencies {
         </FrameLayout>
 
     </AppBarLayout>
+```
 
 <br>
-
-<b>2</b> - Add SearchLiveo to my Activity 
-<br>
-```java
-    //findViewById... 
-<br>
-    mSearchLiveo.with(this).build(); 
-<br><br>
-
-    //Starting SearchLiveo... 
-<br>
-    mSearchLiveo.show();  
-<br>  
 # License
 ```
 Copyright 2018 Rudson Lima
