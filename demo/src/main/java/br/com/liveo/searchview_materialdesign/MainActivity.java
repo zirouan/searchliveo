@@ -6,15 +6,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import br.com.liveo.searchliveo.OnSearchListener;
 import br.com.liveo.searchliveo.SearchLiveo;
 
-public class MainActivity extends AppCompatActivity implements OnSearchListener {
+public class MainActivity extends AppCompatActivity implements SearchLiveo.OnSearchListener {
 
     private SearchLiveo mSearchLiveo;
 
@@ -37,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements OnSearchListener 
 
         mSearchLiveo = findViewById(R.id.search_liveo);
         mSearchLiveo.with(this).
-                statusBarHideColor(R.color.colorPrimaryDark).
-                statusBarShowColor(R.color.action_mode_primary_Dark).
                 build();
     }
 
@@ -66,13 +63,6 @@ public class MainActivity extends AppCompatActivity implements OnSearchListener 
     @Override
     public void changedSearch(CharSequence text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void hideSearch() {
-        if (mSearchLiveo != null){
-            mSearchLiveo.hide();
-        }
     }
 
     @Override

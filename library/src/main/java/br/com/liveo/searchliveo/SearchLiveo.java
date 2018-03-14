@@ -1,7 +1,7 @@
 package br.com.liveo.searchliveo;
 
 /*
- * Copyright 2016 Rudson Lima
+ * Copyright 2018 Rudson Lima
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,38 +55,151 @@ import java.util.TimerTask;
 
 public class SearchLiveo extends FrameLayout {
 
+    private Timer mTimer;
     private Activity mContext;
-    private EditText mEdtSearch;
 
+    private EditText mEdtSearch;
     private ImageView mImgArrow;
     private ImageView mImgVoice;
     private ImageView mImgClose;
 
-    private RelativeLayout mViewSearch;
-
-    private int mColorPrimaryDark;
+    private boolean voice = true;
     private boolean active = false;
-    private boolean isVoice = true;
 
     private int mColorIcon = -1;
-    private int mAfterCharacter = 0;
+    private int mMinToSearch = 3;
+    private int mSearchDelay = 800;
+
     private int mColorIconArrow = -1;
     private int mColorIconVoice = -1;
     private int mColorIconClose = -1;
 
+    private int mColorPrimaryDark;
     private int mStatusBarHideColor = -1;
     private int mStatusBarShowColor = -1;
-    private OnSearchListener mSearchListener;
 
-    private Timer mTimer;
-    private int mSearchDelay = 800;
+    private RelativeLayout mViewSearch;
+
+    private OnSearchListener mSearchListener;
+    private OnHideSearchListener mHideSearchListener;
 
     public static int REQUEST_CODE_SPEECH_INPUT = 7777;
 
-    private static String SEARCH_TEXT = "searchText";
-    private static String STATE_TO_SAVE = "stateToSave";
-    private static String INSTANCE_STATE = "instanceState";
+    private static String SEARCH_LIVEO_SEARCH_TEXT = "searchText";
+    private static String SEARCH_LIVEO_STATE_TO_SAVE = "stateToSave";
+    private static String SEARCH_LIVEO_INSTANCE_STATE = "instanceState";
 
+    public interface OnSearchListener {
+        void changedSearch(CharSequence text);
+    }
+
+    public interface OnHideSearchListener {
+        void hideSearch();
+    }
+
+    public SearchLiveo(Context context) {
+        this(context, null);
+    }
+
+    public SearchLiveo(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public SearchLiveo(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        if (!isInEditMode()) {
+            initView(context);
+            initViewAttribute(context, attrs, defStyleAttr);
+        }
+    }
+
+    //region Methods init
+    private void initView(Context context) {
+        View view = LayoutInflater.from(context).inflate(
+                R.layout.search_liveo, this, true);
+
+        mImgArrow = view.findViewById(R.id.img_arrow);
+        mImgVoice = view.findViewById(R.id.img_voice);
+        mImgClose = view.findViewById(R.id.img_close);
+
+        mEdtSearch = view.findViewById(R.id.edt_search);
+        mImgClose.setVisibility(isVoice() ? View.GONE : View.VISIBLE);
+
+        mViewSearch = view.findViewById(R.id.view_search);
+        mViewSearch.setVisibility(View.INVISIBLE);
+
+        mEdtSearch.setOnKeyListener(onKeyListener);
+
+        mImgArrow.setOnClickListener(onClickSearch);
+        mImgVoice.setOnClickListener(onClickVoice);
+        mImgClose.setOnClickListener(onClickClose);
+
+        mEdtSearch.setOnEditorActionListener(onEditorActionListener);
+        mEdtSearch.addTextChangedListener(new OnTextWatcherEdtSearch());
+    }
+
+    private void initViewAttribute(Context context, AttributeSet attributeSet, int defStyleAttr) {
+        TypedArray attr = context.obtainStyledAttributes(attributeSet,
+                R.styleable.SearchLiveo, defStyleAttr, 0);
+        if (attr != null) {
+            try {
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoHint)) {
+                    hint(attr.getString(R.styleable.SearchLiveo_searchLiveoHint));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoTextColor)) {
+                    mEdtSearch.setTextColor(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoTextColor, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoHintColor)) {
+                    mEdtSearch.setHintTextColor(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoHintColor, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorIcon)) {
+                    setColorIcon(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoColorIcon, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorArrow)) {
+                    setColorIconArrow(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoColorArrow, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorVoice)) {
+                    setColorIconVoice(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoColorVoice, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorClose)) {
+                    setColorIconClose(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoColorClose, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoBackground)) {
+                    mViewSearch.setBackgroundColor(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoBackground, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoStatusBarShowColor)) {
+                    setStatusBarShowColor(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoStatusBarShowColor, -1));
+                }
+
+                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoStatusBarHideColor)) {
+                    setStatusBarHideColor(attr.getColor(
+                            R.styleable.SearchLiveo_searchLiveoStatusBarHideColor, -1));
+                }
+            } finally {
+                attr.recycle();
+            }
+        }
+    }
+    //endregion
+
+    //region Methods with - build
 
     /**
      * Start context and the listener Search Live library.
@@ -132,6 +245,16 @@ public class SearchLiveo extends FrameLayout {
         return this;
     }
 
+    /**
+     * Use when you want to know the exact moment that SearchLiveo is hidden
+     *
+     * @param onHideSearchListener - Listener
+     */
+    public SearchLiveo hideSearch(OnHideSearchListener onHideSearchListener) {
+        this.mHideSearchListener = onHideSearchListener;
+        return this;
+    }
+
     public void build() {
 
         try {
@@ -140,112 +263,22 @@ public class SearchLiveo extends FrameLayout {
                 TypedArray typedArray = theme.obtainStyledAttributes(
                         new int[]{android.R.attr.colorPrimaryDark});
 
-                setColorPrimaryDark(typedArray.getResourceId(0, 0));
+                this.mColorPrimaryDark = ContextCompat.getColor(mContext,
+                        typedArray.getResourceId(0, 0));
             }
         } catch (Exception e) {
             e.getStackTrace();
         }
     }
+    //endregion
 
-    public SearchLiveo(Context context) {
-        this(context, null);
+    //region Methods custom
+    public boolean isActive() {
+        return active;
     }
 
-    public SearchLiveo(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public SearchLiveo(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        if (!isInEditMode()) {
-            init(context);
-            initAttribute(context, attrs, defStyleAttr);
-        }
-    }
-
-    private void init(Context context) {
-        View view = LayoutInflater.from(context).inflate(
-                R.layout.search_liveo, this, true);
-
-        setEdtSearch((EditText) view.findViewById(R.id.edt_search));
-
-        mImgArrow = view.findViewById(R.id.img_arrow);
-        mImgVoice = view.findViewById(R.id.img_voice);
-        mImgClose = view.findViewById(R.id.img_close);
-
-        mImgClose.setVisibility(isVoice() ? View.GONE : View.VISIBLE);
-
-        mViewSearch = view.findViewById(R.id.view_search);
-        mViewSearch.setVisibility(View.INVISIBLE);
-
-        getEdtSearch().setOnKeyListener(onKeyListener);
-
-        mImgArrow.setOnClickListener(onClickSearchArrow);
-        mImgVoice.setOnClickListener(onClickVoiceSearch);
-        mImgClose.setOnClickListener(onClickCloseSearch);
-
-        getEdtSearch().setOnEditorActionListener(onEditorActionListener);
-        getEdtSearch().addTextChangedListener(new OnTextWatcherEdtSearch());
-    }
-
-    private void initAttribute(Context context, AttributeSet attributeSet, int defStyleAttr) {
-        TypedArray attr = context.obtainStyledAttributes(attributeSet,
-                R.styleable.SearchLiveo, defStyleAttr, 0);
-        if (attr != null) {
-            try {
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoHint)) {
-                    hint(attr.getString(R.styleable.SearchLiveo_searchLiveoHint));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoTextColor)) {
-                    getEdtSearch().setTextColor(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoTextColor, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoHintColor)) {
-                    getEdtSearch().setHintTextColor(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoHintColor, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorIcon)) {
-                    setColorIcon(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoColorIcon, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorArrow)) {
-                    setColorIconArrow(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoColorArrow, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorVoice)) {
-                    setColorIconVoice(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoColorVoice, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoColorClose)) {
-                    setColorIconClose(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoColorClose, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoBackground)) {
-                    mViewSearch.setBackgroundColor(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoBackground, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoStatusBarShowColor)) {
-                    setStatusBarShowColor(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoStatusBarShowColor, -1));
-                }
-
-                if (attr.hasValue(R.styleable.SearchLiveo_searchLiveoStatusBarHideColor)) {
-                    setStatusBarHideColor(attr.getColor(
-                            R.styleable.SearchLiveo_searchLiveoStatusBarHideColor, -1));
-                }
-            } finally {
-                attr.recycle();
-            }
-        }
+    public boolean isVoice() {
+        return voice;
     }
 
     /**
@@ -258,6 +291,20 @@ public class SearchLiveo extends FrameLayout {
         return this;
     }
 
+    /**
+     * Minimum number of characters to start the search
+     *
+     * @param minToSearch default > 3
+     */
+    public SearchLiveo minToSearch(int minToSearch) {
+        this.mMinToSearch = minToSearch;
+        return this;
+    }
+
+    public SearchLiveo removeMinToSearch() {
+        this.mMinToSearch = 0;
+        return this;
+    }
 
     /**
      * Set a new background color. If you do not use this method and standard color is white SearchLiveo.
@@ -288,7 +335,7 @@ public class SearchLiveo extends FrameLayout {
      * @param color color attribute - colors.xml file
      */
     public SearchLiveo textColor(int color) {
-        getEdtSearch().setTextColor(ContextCompat.getColor(mContext, color));
+        mEdtSearch.setTextColor(ContextCompat.getColor(mContext, color));
         return this;
     }
 
@@ -299,7 +346,7 @@ public class SearchLiveo extends FrameLayout {
      * @param color color attribute - colors.xml file
      */
     public SearchLiveo hintColor(int color) {
-        getEdtSearch().setHintTextColor(ContextCompat.getColor(mContext, color));
+        mEdtSearch.setHintTextColor(ContextCompat.getColor(mContext, color));
         return this;
     }
 
@@ -309,19 +356,7 @@ public class SearchLiveo extends FrameLayout {
      * @param text "valeu"
      */
     public SearchLiveo text(String text) {
-        getEdtSearch().setText(text);
-        return this;
-    }
-
-
-    /**
-     * Set a new hint.
-     * In his layout.xml you can use the "app:searchLiveoHint="value"" attribute
-     *
-     * @param text "valeu"
-     */
-    public SearchLiveo hint(String text) {
-        getEdtSearch().setHint(text);
+        mEdtSearch.setText(text);
         return this;
     }
 
@@ -331,7 +366,18 @@ public class SearchLiveo extends FrameLayout {
      * @param text string attribute - string.xml file
      */
     public SearchLiveo text(int text) {
-        getEdtSearch().setText(mContext.getString(text));
+        mEdtSearch.setText(mContext.getString(text));
+        return this;
+    }
+
+    /**
+     * Set a new hint.
+     * In his layout.xml you can use the "app:searchLiveoHint="value"" attribute
+     *
+     * @param text "valeu"
+     */
+    public SearchLiveo hint(String text) {
+        mEdtSearch.setHint(text);
         return this;
     }
 
@@ -342,7 +388,7 @@ public class SearchLiveo extends FrameLayout {
      * @param text string attribute - string.xml file
      */
     public SearchLiveo hint(int text) {
-        getEdtSearch().setHint(mContext.getString(text));
+        mEdtSearch.setHint(mContext.getString(text));
         return this;
     }
 
@@ -381,9 +427,8 @@ public class SearchLiveo extends FrameLayout {
 
     /**
      * Returns the value typed
-     *
      */
-    public String queryText(){
+    public String queryText() {
         return mEdtSearch.getText().toString().trim();
     }
 
@@ -424,7 +469,7 @@ public class SearchLiveo extends FrameLayout {
      * Hide voice icon
      */
     public SearchLiveo hideVoice() {
-        setIsVoice(false);
+        setVoice(false);
         mImgVoice.setVisibility(View.GONE);
         return this;
     }
@@ -433,7 +478,7 @@ public class SearchLiveo extends FrameLayout {
      * Show voice icon
      */
     public SearchLiveo showVoice() {
-        setIsVoice(true);
+        setVoice(true);
         mImgVoice.setVisibility(View.VISIBLE);
         return this;
     }
@@ -474,12 +519,68 @@ public class SearchLiveo extends FrameLayout {
         }
     }
 
+    /**
+     * If SearchView is active(show), this method returns the value true
+     */
+    private void setActive(boolean active) {
+        this.active = active;
+    }
+
+    private void setVoice(boolean isVoice) {
+        this.voice = isVoice;
+    }
+
+    private void setStatusBarHideColor(int statusBarHideColor) {
+        this.mStatusBarHideColor = statusBarHideColor;
+    }
+
+    private void setStatusBarShowColor(int statusBarShowColor) {
+        this.mStatusBarShowColor = statusBarShowColor;
+    }
+
+    private int getColorIcon() {
+        return mColorIcon;
+    }
+
+    private void setColorIcon(int colorIcon) {
+        this.mColorIcon = colorIcon;
+        this.colorIcon();
+    }
+
+    private int getColorIconArrow() {
+        return mColorIconArrow;
+    }
+
+    private void setColorIconArrow(int color) {
+        this.mColorIconArrow = color;
+        this.colorIconArrow();
+    }
+
+    private int getColorIconVoice() {
+        return mColorIconVoice;
+    }
+
+    private void setColorIconVoice(int color) {
+        this.mColorIconVoice = color;
+        this.colorIconVoice();
+    }
+
+    private int getColorIconClose() {
+        return mColorIconClose;
+    }
+
+    private void setColorIconClose(int color) {
+        this.mColorIconClose = color;
+        this.colorIconClose();
+    }
+    //endregion
+
+    //region Methods Listener
     private OnKeyListener onKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    mSearchListener.hideSearch();
                     hide();
                     return true;
                 }
@@ -493,144 +594,15 @@ public class SearchLiveo extends FrameLayout {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if (mSearchListener != null) {
-                    mSearchListener.changedSearch(getEdtSearch().getText().toString());
-                    mSearchListener.hideSearch();
+                    mSearchListener.changedSearch(queryText());
                 }
+
+                hide();
                 return true;
             }
             return false;
         }
     };
-
-    private OnClickListener onClickVoiceSearch = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            startVoice(getEdtSearch());
-        }
-    };
-
-    private OnClickListener onClickCloseSearch = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (getEdtSearch().getText().toString().length() != 0) {
-                getEdtSearch().setText("");
-                mContext.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager inputMethodManager = (InputMethodManager)
-                                mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                        if (inputMethodManager != null) {
-                            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,
-                                    InputMethodManager.HIDE_IMPLICIT_ONLY);
-                        }
-                    }
-                });
-            }
-        }
-    };
-
-    private OnClickListener onClickSearchArrow = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mSearchListener.hideSearch();
-        }
-    };
-
-    private OnClickListener onClickRecyclerView = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            hide();
-        }
-    };
-
-    /**
-     * If SearchView is active(show), this method returns the value true
-     */
-    public boolean isActive() {
-        return active;
-    }
-
-    private void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public boolean isVoice() {
-        return isVoice;
-    }
-
-    public void setIsVoice(boolean isVoice) {
-        this.isVoice = isVoice;
-    }
-
-    public int getStatusBarHideColor() {
-        return mStatusBarHideColor;
-    }
-
-    public void setStatusBarHideColor(int mStatusBarHideColor) {
-        this.mStatusBarHideColor = mStatusBarHideColor;
-    }
-
-    public int getStatusBarShowColor() {
-        return mStatusBarShowColor;
-    }
-
-    public void setStatusBarShowColor(int mStatusBarShowColor) {
-        this.mStatusBarShowColor = mStatusBarShowColor;
-    }
-
-    private int getColorIcon() {
-        return mColorIcon;
-    }
-
-    private void setColorIcon(int colorIcon) {
-        this.mColorIcon = colorIcon;
-        this.colorIcon();
-    }
-
-    public int getColorIconArrow() {
-        return mColorIconArrow;
-    }
-
-    public void setColorIconArrow(int color) {
-        this.mColorIconArrow = color;
-        this.colorIconArrow();
-    }
-
-    public int getColorIconVoice() {
-        return mColorIconVoice;
-    }
-
-    public void setColorIconVoice(int color) {
-        this.mColorIconVoice = color;
-        this.colorIconVoice();
-    }
-
-    public int getColorIconClose() {
-        return mColorIconClose;
-    }
-
-    public void setColorIconClose(int color) {
-        this.mColorIconClose = color;
-        this.colorIconClose();
-    }
-
-    public EditText getEdtSearch() {
-        return mEdtSearch;
-    }
-
-    public void setEdtSearch(EditText edtSearch) {
-        this.mEdtSearch = edtSearch;
-    }
-
-    public int getAfterCharacter() {
-        return mAfterCharacter;
-    }
-
-    public SearchLiveo afterCharacter(int mAfterCharacter) {
-        this.mAfterCharacter = mAfterCharacter;
-        return this;
-    }
 
     private class OnTextWatcherEdtSearch implements TextWatcher {
 
@@ -646,7 +618,7 @@ public class SearchLiveo extends FrameLayout {
                     mTimer.cancel();
                 }
 
-                if (getEdtSearch().getText().toString().length() == 0) {
+                if (queryText().isEmpty()) {
                     mImgClose.setVisibility(isVoice() ? View.GONE : View.VISIBLE);
                     mImgVoice.setVisibility(isVoice() ? View.VISIBLE : View.GONE);
                     mImgVoice.setImageResource(R.drawable.ic_keyboard_voice);
@@ -667,7 +639,8 @@ public class SearchLiveo extends FrameLayout {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (s.length() > 3) {
+            if (s.length() > mMinToSearch) {
+
                 mTimer = new Timer();
                 mTimer.schedule(new TimerTask() {
                     @Override
@@ -680,8 +653,7 @@ public class SearchLiveo extends FrameLayout {
                                 public void run() {
 
                                     if (mSearchListener != null) {
-                                        mSearchListener.changedSearch(
-                                                getEdtSearch().getText().toString());
+                                        mSearchListener.changedSearch(queryText());
                                     }
 
                                     hideKeybord();
@@ -694,6 +666,34 @@ public class SearchLiveo extends FrameLayout {
             }
         }
     }
+
+    private OnClickListener onClickSearch = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            hide();
+        }
+    };
+
+    private OnClickListener onClickVoice = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startVoice();
+        }
+    };
+
+    private OnClickListener onClickClose = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!queryText().isEmpty()) {
+                mEdtSearch.setText("");
+
+                showKeyboardRunOnUiThread();
+            }
+        }
+    };
+    //endregion
+
+    //region Methods animation
 
     /**
      * Hide SearchLiveo
@@ -721,38 +721,29 @@ public class SearchLiveo extends FrameLayout {
 
         } else {
 
-            Animation mFadeIn = AnimationUtils.loadAnimation(
+            Animation fadeIn = AnimationUtils.loadAnimation(
                     mContext.getApplicationContext(), android.R.anim.fade_in);
+
             mViewSearch.setEnabled(true);
             mViewSearch.setVisibility(View.VISIBLE);
-            mViewSearch.setAnimation(mFadeIn);
+            mViewSearch.setAnimation(fadeIn);
 
-            mContext.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    InputMethodManager inputMethodManager = (InputMethodManager)
-                            mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    if (mContext != null && inputMethodManager != null) {
-                        inputMethodManager.toggleSoftInput(
-                                InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    }
-                }
-            });
+            showKeyboardRunOnUiThread();
         }
 
-        getEdtSearch().requestFocus();
+        mEdtSearch.requestFocus();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void showAnimation() {
         try {
 
-            if (getStatusBarShowColor() != -1) {
-                mContext.getWindow().setStatusBarColor(getStatusBarShowColor());
-            } else {
-                mContext.getWindow().setStatusBarColor(ContextCompat.getColor(mContext, R.color.search_liveo_primary_dark));
-            }
+            int DEFAULT_STATUS_BAR_SHOW_COLOR = -1;
+
+            mContext.getWindow().setStatusBarColor(
+                    mStatusBarShowColor != DEFAULT_STATUS_BAR_SHOW_COLOR ?
+                            mStatusBarShowColor : ContextCompat.getColor(
+                            mContext, R.color.search_liveo_primary_dark));
 
             final Animator animator = ViewAnimationUtils.createCircularReveal(mViewSearch,
                     mViewSearch.getWidth() - (int) dpToPixel(24, this.mContext),
@@ -765,18 +756,7 @@ public class SearchLiveo extends FrameLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            InputMethodManager inputMethodManager = (InputMethodManager)
-                                    mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                            if (mContext != null && inputMethodManager != null) {
-                                inputMethodManager.toggleSoftInput(
-                                        InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                            }
-                        }
-                    });
+                    showKeyboardRunOnUiThread();
                 }
 
                 @Override
@@ -797,14 +777,7 @@ public class SearchLiveo extends FrameLayout {
             mContext.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputMethodManager inputMethodManager = (InputMethodManager)
-                            mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    if (mContext != null && inputMethodManager != null) {
-                        inputMethodManager.toggleSoftInput(
-                                InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    }
-
+                    showKeyboardRunOnUiThread();
                 }
             });
         }
@@ -812,15 +785,16 @@ public class SearchLiveo extends FrameLayout {
         mViewSearch.setVisibility(View.VISIBLE);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void hideAnimation() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            if (getStatusBarHideColor() != -1) {
-                mContext.getWindow().setStatusBarColor(getStatusBarHideColor());
-            } else {
-                mContext.getWindow().setStatusBarColor(getColorPrimaryDark());
-            }
+            int DEFAULT_STATUS_BAR_HIDE_COLOR = -1;
+
+            mContext.getWindow().setStatusBarColor(
+                    mStatusBarHideColor != DEFAULT_STATUS_BAR_HIDE_COLOR ?
+                            mStatusBarHideColor : mColorPrimaryDark);
 
             final Animator animatorHide = ViewAnimationUtils.createCircularReveal(mViewSearch,
                     mViewSearch.getWidth() - (int) dpToPixel(24, mContext),
@@ -832,13 +806,7 @@ public class SearchLiveo extends FrameLayout {
                     mContext.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            InputMethodManager inputMethodManager = (InputMethodManager)
-                                    mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                            if (mContext != null && inputMethodManager != null) {
-                                inputMethodManager.hideSoftInputFromWindow(
-                                        mViewSearch.getWindowToken(), 0);
-                            }
+                            hideKeybord();
                         }
                     });
                 }
@@ -846,6 +814,10 @@ public class SearchLiveo extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mViewSearch.setVisibility(View.GONE);
+
+                    if (mHideSearchListener != null) {
+                        mHideSearchListener.hideSearch();
+                    }
                 }
 
                 @Override
@@ -866,13 +838,7 @@ public class SearchLiveo extends FrameLayout {
             mContext.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    InputMethodManager inputMethodManager = (InputMethodManager)
-                            mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    if (mContext != null && inputMethodManager != null) {
-                        inputMethodManager.hideSoftInputFromWindow(
-                                mViewSearch.getWindowToken(), 0);
-                    }
+                    hideKeybord();
                 }
             });
 
@@ -881,18 +847,14 @@ public class SearchLiveo extends FrameLayout {
 
             mViewSearch.setAnimation(mFadeOut);
             mViewSearch.setVisibility(View.INVISIBLE);
+
+            if (mHideSearchListener != null) {
+                mHideSearchListener.hideSearch();
+            }
         }
 
-        getEdtSearch().setText("");
+        mEdtSearch.setText("");
         mViewSearch.setEnabled(false);
-    }
-
-    private int getColorPrimaryDark() {
-        return mColorPrimaryDark;
-    }
-
-    private void setColorPrimaryDark(int mColorPrimaryDark) {
-        this.mColorPrimaryDark = ContextCompat.getColor(mContext, mColorPrimaryDark);
     }
 
     private float dpToPixel(float dp, Context context) {
@@ -900,15 +862,17 @@ public class SearchLiveo extends FrameLayout {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return dp * (metrics.densityDpi / 160f);
     }
+    //endregion
 
+    //region Methods InstanceState
     @Override
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState());
-        bundle.putBoolean(STATE_TO_SAVE, this.isActive());
+        bundle.putParcelable(SEARCH_LIVEO_INSTANCE_STATE, super.onSaveInstanceState());
+        bundle.putBoolean(SEARCH_LIVEO_STATE_TO_SAVE, this.isActive());
 
-        if (!getEdtSearch().getText().toString().trim().equals("")) {
-            bundle.putString(SEARCH_TEXT, getEdtSearch().getText().toString());
+        if (!queryText().isEmpty()) {
+            bundle.putString(SEARCH_LIVEO_SEARCH_TEXT, queryText());
         }
 
         return bundle;
@@ -919,25 +883,45 @@ public class SearchLiveo extends FrameLayout {
 
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            this.setActive(bundle.getBoolean(STATE_TO_SAVE));
+            this.setActive(bundle.getBoolean(SEARCH_LIVEO_STATE_TO_SAVE));
 
-            String text = bundle.getString(SEARCH_TEXT, "");
+            String text = bundle.getString(SEARCH_LIVEO_SEARCH_TEXT, "");
             if (!text.trim().equals("")) {
-                getEdtSearch().setText(text);
+                mEdtSearch.setText(text);
             }
 
             if (this.isActive()) {
                 show();
             }
 
-            state = bundle.getParcelable(INSTANCE_STATE);
+            state = bundle.getParcelable(SEARCH_LIVEO_INSTANCE_STATE);
         }
 
         super.onRestoreInstanceState(state);
     }
+    //endregion
 
-    public void hideKeybord() {
-        if(!mContext.isFinishing()) {
+    //region Methods keyboard
+    private void showKeyboardRunOnUiThread() {
+        if (mContext != null && !mContext.isFinishing()) {
+            mContext.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    InputMethodManager inputMethodManager = (InputMethodManager)
+                            mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    if (inputMethodManager != null) {
+                        inputMethodManager.toggleSoftInput(
+                                InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    }
+
+                }
+            });
+        }
+    }
+
+    private void hideKeybord() {
+        if (mContext != null && !mContext.isFinishing()) {
             InputMethodManager inputMethodManager = (InputMethodManager)
                     mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -947,14 +931,11 @@ public class SearchLiveo extends FrameLayout {
             }
         }
     }
+    //endregion
 
-    private void startVoice(EditText editText) {
-        InputMethodManager inputMethodManager = (InputMethodManager)
-                mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        if (inputMethodManager != null) {
-            inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-        }
+    //region Methods voice
+    private void startVoice() {
+        hideKeybord();
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -974,10 +955,11 @@ public class SearchLiveo extends FrameLayout {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
                 if (mSearchListener != null) {
-                    getEdtSearch().setText(result.get(0));
+                    mEdtSearch.setText(result.get(0));
                     mSearchListener.changedSearch(result.get(0));
                 }
             }
         }
     }
+    //endregion
 }

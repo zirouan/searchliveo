@@ -6,7 +6,7 @@ Library SearchView material design
 <img src="https://github.com/rudsonlive/SearchView-MaterialDesign/blob/master/Screenshot/SearchLiveo.png">
 <br>
 
-# Download
+# Gradle
 Step 1 - Add the JitPack repository to your root build.gradle file
 ```
 allprojects {
@@ -22,7 +22,38 @@ dependencies {
   implementation 'com.github.rudsonlive:searchliveo:1.0.1'
 }
 ```
+<br>
 
+# Quick Start
+
+<b>1</b> - Add SearchLiveo to your layout
+```xml```
+    <AppBarLayout...
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Toolbar.../>
+
+            <br.com.liveo.searchliveo.SearchLiveo
+                android:id="@+id/search_liveo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+
+    </AppBarLayout>
+```xml```
+<br>
+
+<b>2</b> - Add SearchLiveo to my Activity
+```xml```
+    //findViewById...
+    mSearchLiveo.with(this).build();
+
+    //Starting SearchLiveo...
+    mSearchLiveo.show();
+```xml```
 # License
 ```
 Copyright 2018 Rudson Lima
