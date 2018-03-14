@@ -45,6 +45,24 @@ dependencies {
 
     </AppBarLayout>
 ```
+<b>1</b> - Implementing the listener
+```java
+  ...implements SearchLiveo.OnSearchListener
+  
+  *signature
+  @Override
+  public void changedSearch(CharSequence text) {}
+```
+<b>2</b> - Add to my activity
+```java
+  mSearchLiveo = findViewById(R.id.search_liveo);
+  mSearchLiveo.with(this).build();
+```
+<b>3</b> - SearchLiveo show
+```java
+  mSearchLiveo.show();  
+```
+
 # License
 ```
 Copyright 2018 Rudson Lima
