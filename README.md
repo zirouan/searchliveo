@@ -20,7 +20,7 @@ Step 2 - Add the dependencies:
 
 ```gradle
 dependencies {
-  implementation 'com.github.rudsonlive:searchliveo:1.0.1'
+  implementation 'com.github.rudsonlive:searchliveo:1.0.2'
 }
 ```
 
