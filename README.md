@@ -43,18 +43,20 @@ dependencies {
         </FrameLayout>
 
     </AppBarLayout>
-```xml
+
 <br>
 
-<b>2</b> - Add SearchLiveo to my Activity <br>
+<b>2</b> - Add SearchLiveo to my Activity 
+<br>
 ```java
-    //findViewById... <br>
-    mSearchLiveo.with(this).build(); <br><br>
+    //findViewById... 
+<br>
+    mSearchLiveo.with(this).build(); 
+<br><br>
 
-    //Starting SearchLiveo... <br>
-    mSearchLiveo.show();
-```java
-  
+    //Starting SearchLiveo... 
+<br>
+    mSearchLiveo.show();  
 <br>  
 # License
 ```
