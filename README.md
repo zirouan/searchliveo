@@ -27,7 +27,7 @@ dependencies {
 # Quick Start
 
 <b>1</b> - Add SearchLiveo to your layout
-```xml```
+```xml
     <AppBarLayout...
 
         <FrameLayout
@@ -43,17 +43,19 @@ dependencies {
         </FrameLayout>
 
     </AppBarLayout>
-```xml```
+```xml
 <br>
 
-<b>2</b> - Add SearchLiveo to my Activity
-```xml```
-    //findViewById...
-    mSearchLiveo.with(this).build();
+<b>2</b> - Add SearchLiveo to my Activity <br>
+```java
+    //findViewById... <br>
+    mSearchLiveo.with(this).build(); <br><br>
 
-    //Starting SearchLiveo...
+    //Starting SearchLiveo... <br>
     mSearchLiveo.show();
-```xml```
+```java
+  
+<br>  
 # License
 ```
 Copyright 2018 Rudson Lima
