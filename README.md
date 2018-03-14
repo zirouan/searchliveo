@@ -8,7 +8,7 @@ Library SearchView material design
 
 # Gradle
 Step 1 - Add the JitPack repository to your root build.gradle file
-```java
+```gradle
 allprojects {
   repositories {
     ...
@@ -18,12 +18,11 @@ allprojects {
 ```
 Step 2 - Add the dependencies:
 
-```java
+```gradle
 dependencies {
   implementation 'com.github.rudsonlive:searchliveo:1.0.1'
 }
 ```
-<br>
 
 # Quick Start
 
@@ -47,9 +46,8 @@ dependencies {
 ```
 <b>1</b> - Implementing the listener
 ```java
-  ...implements SearchLiveo.OnSearchListener
+  implements SearchLiveo.OnSearchListener
   
-  *signature
   @Override
   public void changedSearch(CharSequence text) {}
 ```
