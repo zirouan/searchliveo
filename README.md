@@ -43,9 +43,7 @@ dependencies {
         </FrameLayout>
 
     </AppBarLayout>
-```
 
-<br>
 # License
 ```
 Copyright 2018 Rudson Lima
