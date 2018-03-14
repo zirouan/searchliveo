@@ -8,16 +8,17 @@ Library SearchView material design
 
 # Gradle
 Step 1 - Add the JitPack repository to your root build.gradle file
-```
+```java
 allprojects {
   repositories {
     ...
     maven { url 'https://jitpack.io' }
   }
 }
-
+```
 Step 2 - Add the dependencies:
 
+```java
 dependencies {
   implementation 'com.github.rudsonlive:searchliveo:1.0.1'
 }
@@ -43,7 +44,7 @@ dependencies {
         </FrameLayout>
 
     </AppBarLayout>
-
+```
 # License
 ```
 Copyright 2018 Rudson Lima
