@@ -62,6 +62,15 @@ dependencies {
 ```java
   mSearchLiveo.show();  
 ```
+<b>4</b> - If you need to know when SearchLiveo is closed
+```java
+  mSearchLiveo.with(this).
+    hideSearch(new SearchLiveo.OnHideSearchListener() {
+        @Override
+        public void hideSearch() {}
+    }).
+  build();
+```
 
 # License
 ```
