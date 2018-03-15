@@ -6,6 +6,9 @@ Library SearchView material design
 <img src="https://github.com/rudsonlive/SearchView-MaterialDesign/blob/master/Screenshot/SearchLiveo.png">
 <br>
 
+# Requirements
+It requires 18+ API and android support v7 27.1.0 (AppCompatActivity + Toolbar)
+
 # Gradle
 Step 1 - Add the JitPack repository to your root build.gradle file
 ```gradle
