@@ -65,6 +65,7 @@ public class SearchLiveo extends FrameLayout {
 
     private boolean voice = true;
     private boolean active = false;
+    private boolean imeActionSearch = false;
 
     private int mColorIcon = -1;
     private int mMinToSearch = 3;
@@ -466,6 +467,17 @@ public class SearchLiveo extends FrameLayout {
     }
 
     /**
+     * By enabling imeActionSearch you are only activating the search when you click the imeActionSearch on the keyboard.
+     * This disables the search as you type.
+     *
+     *
+     */
+    public SearchLiveo imeActionSearch(){
+        this.imeActionSearch = true;
+        return this;
+    }
+
+    /**
      * Hide voice icon
      */
     public SearchLiveo hideVoice() {
@@ -592,7 +604,7 @@ public class SearchLiveo extends FrameLayout {
     private TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH && imeActionSearch) {
                 if (mSearchListener != null) {
                     mSearchListener.changedSearch(queryText());
                 }
@@ -600,6 +612,8 @@ public class SearchLiveo extends FrameLayout {
                 hide();
                 return true;
             }
+
+            hide();
             return false;
         }
     };
@@ -639,6 +653,10 @@ public class SearchLiveo extends FrameLayout {
 
         @Override
         public void afterTextChanged(Editable s) {
+            if (imeActionSearch){
+                return;
+            }
+
             if (s.length() > mMinToSearch) {
 
                 mTimer = new Timer();
@@ -694,7 +712,6 @@ public class SearchLiveo extends FrameLayout {
     //endregion
 
     //region Methods animation
-
     /**
      * Hide SearchLiveo
      */
