@@ -10,7 +10,7 @@ Library SearchView material design
 It requires 18+ API and android support v7 27.1.0 (AppCompatActivity + Toolbar)
 
 # Gradle
-Step 1 - Add the JitPack repository to your root build.gradle file
+<b>Step 1</b> - Add the JitPack repository to your root build.gradle file
 ```gradle
 allprojects {
   repositories {
@@ -19,7 +19,7 @@ allprojects {
   }
 }
 ```
-Step 2 - Add the dependencies:
+<b>Step 2</b> - Add the dependencies:
 
 ```gradle
 dependencies {
@@ -29,7 +29,7 @@ dependencies {
 
 # Quick Start
 
-<b>1</b> - Add SearchLiveo to your layout
+<b>Step 1</b> - Add SearchLiveo to your layout
 ```xml
     <AppBarLayout...
 
@@ -47,23 +47,23 @@ dependencies {
 
     </AppBarLayout>
 ```
-<b>1</b> - Implementing the listener
+<b>Step 2</b> - Implementing the listener
 ```java
   implements SearchLiveo.OnSearchListener
   
   @Override
   public void changedSearch(CharSequence text) {}
 ```
-<b>2</b> - Add to my activity
+<b>Step 3</b> - Add to my activity
 ```java
   mSearchLiveo = findViewById(R.id.search_liveo);
   mSearchLiveo.with(this).build();
 ```
-<b>3</b> - SearchLiveo show
+<b>Step 4</b> - SearchLiveo show
 ```java
   mSearchLiveo.show();  
 ```
-<b>4</b> - If you need to know when SearchLiveo is closed
+<b>Step 5</b> - If you need to know when SearchLiveo is closed
 ```java
   mSearchLiveo.with(this).
     hideSearch(new SearchLiveo.OnHideSearchListener() {
