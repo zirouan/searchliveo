@@ -560,7 +560,7 @@ public class SearchLiveo extends FrameLayout {
     }
 
     private int getColorIconArrow() {
-        return mColorIconArrow;
+        return ContextCompat.getColor(mContext, mColorIconArrow);
     }
 
     private void setColorIconArrow(int color) {
@@ -569,7 +569,7 @@ public class SearchLiveo extends FrameLayout {
     }
 
     private int getColorIconVoice() {
-        return mColorIconVoice;
+        return ContextCompat.getColor(mContext, mColorIconVoice);
     }
 
     private void setColorIconVoice(int color) {
@@ -578,7 +578,7 @@ public class SearchLiveo extends FrameLayout {
     }
 
     private int getColorIconClose() {
-        return mColorIconClose;
+        return ContextCompat.getColor(mContext, mColorIconClose);
     }
 
     private void setColorIconClose(int color) {
