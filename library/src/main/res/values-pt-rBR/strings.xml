@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="liveo_search_view_search">Pesquisar</string>
+    <string name="liveo_search_view_arrow">Sair da busca</string>
+    <string name="liveo_search_view_voice">Pesquisa por voz</string>
+    <string name="liveo_search_view_close">Apagar texto da busca</string>
+    <string name="liveo_not_supported">Não suportado</string>
+
+</resources>

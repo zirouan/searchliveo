@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">SearchLiveo</string>
-    <string name="clear" />
 
-    <string name="searchview_search">Pesquisar</string>
-    <string name="searchview_voice">Pesquisa por voz</string>
-    <string name="not_supported">Not Supported</string>
+    <string name="liveo_search_view_search">Search</string>
+    <string name="liveo_search_view_arrow">Exit Search</string>
+    <string name="liveo_search_view_voice">Voice search</string>
+    <string name="liveo_search_view_close">Delete query text</string>
+    <string name="liveo_not_supported">Not Supported</string>
 
 </resources>

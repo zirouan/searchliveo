@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- color action mode -->
-    <color name="window_background">@android:color/white</color>
-    <color name="action_mode_primary">#9E9E9E</color>
-    <color name="action_mode_primary_Dark">#616161</color>
+    <color name="search_liveo_window_background">@android:color/white</color>
+    <color name="search_liveo_action_mode_primary">#9E9E9E</color>
+    <color name="search_liveo_action_mode_primary_Dark">#616161</color>
     <!-- color action mode -->
 
     <!--search liveo-->
+    <color name="search_liveo_icon">#FF9E9E9E</color>
     <color name="search_liveo_text_hint">#35000000</color>
     <color name="search_liveo_primary_dark">#AFAFAF</color>
     <color name="toolbar_liveo_shadow_end_color">#44333333</color>

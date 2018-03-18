@@ -33,10 +33,11 @@
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@string/clear"
+            android:contentDescription="@string/liveo_search_view_arrow"
             android:gravity="center_vertical"
             android:padding="12dp"
-            app:srcCompat="@drawable/ic_arrow_back" />
+            android:tint="@color/search_liveo_icon"
+            app:srcCompat="@drawable/ic_liveo_arrow_back" />
 
         <EditText
             android:id="@+id/edt_search"
@@ -60,20 +61,21 @@
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@string/clear"
+            android:contentDescription="@string/liveo_search_view_voice"
             android:gravity="center_vertical"
             android:padding="12dp"
-            app:srcCompat="@drawable/ic_keyboard_voice" />
+            android:tint="@color/search_liveo_icon"
+            app:srcCompat="@drawable/ic_liveo_keyboard_voice" />
 
         <ImageView
             android:id="@+id/img_close"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@string/clear"
+            android:contentDescription="@string/liveo_search_view_close"
             android:gravity="center_vertical"
             android:padding="12dp"
-            android:tint="@color/action_mode_primary"
+            android:tint="@color/search_liveo_icon"
             android:visibility="gone" />
     </LinearLayout>
 </RelativeLayout>

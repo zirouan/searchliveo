@@ -23,7 +23,7 @@ allprojects {
 
 ```gradle
 dependencies {
-  implementation 'com.github.rudsonlive:searchliveo:1.1'
+  implementation 'com.github.rudsonlive:searchliveo:1.1.1'
 }
 ```
 

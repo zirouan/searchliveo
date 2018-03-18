@@ -71,9 +71,9 @@ public class SearchLiveo extends FrameLayout {
     private int mMinToSearch = 3;
     private int mSearchDelay = 800;
 
-    private int mColorIconArrow = -1;
-    private int mColorIconVoice = -1;
-    private int mColorIconClose = -1;
+    private int mColorIconArrow = R.color.search_liveo_icon;
+    private int mColorIconVoice = R.color.search_liveo_icon;
+    private int mColorIconClose = R.color.search_liveo_icon;
 
     private int mColorPrimaryDark;
     private int mStatusBarHideColor = -1;
@@ -635,12 +635,12 @@ public class SearchLiveo extends FrameLayout {
                 if (queryText().isEmpty()) {
                     mImgClose.setVisibility(isVoice() ? View.GONE : View.VISIBLE);
                     mImgVoice.setVisibility(isVoice() ? View.VISIBLE : View.GONE);
-                    mImgVoice.setImageResource(R.drawable.ic_keyboard_voice);
+                    mImgVoice.setImageResource(R.drawable.ic_liveo_keyboard_voice);
                     colorIconVoice();
                 } else {
                     mImgVoice.setVisibility(View.GONE);
                     mImgClose.setVisibility(View.VISIBLE);
-                    mImgClose.setImageResource(R.drawable.ic_close);
+                    mImgClose.setImageResource(R.drawable.ic_liveo_close);
                     colorIconClose();
                 }
 
@@ -957,12 +957,12 @@ public class SearchLiveo extends FrameLayout {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mContext.getString(R.string.searchview_voice));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mContext.getString(R.string.liveo_search_view_voice));
 
         try {
             mContext.startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
-            Toast.makeText(mContext.getApplicationContext(), R.string.not_supported, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext.getApplicationContext(), R.string.liveo_not_supported, Toast.LENGTH_SHORT).show();
         }
     }
 
