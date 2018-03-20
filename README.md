@@ -5,6 +5,10 @@ Library SearchView material design
 <br>
 <br>
 <img src="https://github.com/rudsonlive/SearchView-MaterialDesign/blob/master/Screenshot/SearchLiveo.png">
+<a href="https://play.google.com/store/apps/details?id=br.com.liveo.searchview_materialdesign" target="_blank">
+  <img alt="Android app on Google Play"
+       src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
+</a>
 <br>
 
 # Requirements
