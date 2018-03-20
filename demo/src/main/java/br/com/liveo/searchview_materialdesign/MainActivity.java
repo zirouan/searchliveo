@@ -2,41 +2,56 @@ package br.com.liveo.searchview_materialdesign;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import br.com.liveo.searchliveo.SearchLiveo;
+import br.com.liveo.searchview_materialdesign.base.BaseActivity;
+import br.com.liveo.searchview_materialdesign.databinding.ActivityMainBinding;
+import br.com.liveo.searchview_materialdesign.model.Company;
 
-public class MainActivity extends AppCompatActivity implements SearchLiveo.OnSearchListener {
+public class MainActivity extends BaseActivity implements SearchLiveo.OnSearchListener {
 
-    private SearchLiveo mSearchLiveo;
+    private MainAdapter mAdapter;
+    private ActivityMainBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        this.onInitView();
+    }
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        this.fetchCompanies();
+    }
 
+    private void onInitView() {
+        mBinding = (ActivityMainBinding) this.bindView(R.layout.activity_main);
+        this.onInitToolbar(mBinding.toolbar, R.string.app_name);
 
-        mSearchLiveo = findViewById(R.id.search_liveo);
-        mSearchLiveo.with(this).
+        mBinding.searchLiveo.
+                with(this).
+                removeMinToSearch().
+                removeSearchDelay().
                 build();
+
+        if (mBinding.includeMain != null) {
+            mBinding.includeMain.recyclerView.setHasFixedSize(true);
+            mBinding.includeMain.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            mBinding.includeMain.swipeContainer.setEnabled(false);
+            mBinding.includeMain.swipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent,
+                    R.color.colorPrimary, R.color.colorAccent);
+        }
+    }
+
+    private void fetchCompanies() {
+        mAdapter = new MainAdapter(Company.getCompanies());
+        mBinding.includeMain.recyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -51,9 +66,7 @@ public class MainActivity extends AppCompatActivity implements SearchLiveo.OnSea
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-            if (mSearchLiveo != null) {
-                mSearchLiveo.show();
-            }
+            mBinding.searchLiveo.show();
             return true;
         }
 
@@ -62,7 +75,9 @@ public class MainActivity extends AppCompatActivity implements SearchLiveo.OnSea
 
     @Override
     public void changedSearch(CharSequence text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        if (mAdapter != null) {
+            mAdapter.searchCompanyes(text);
+        }
     }
 
     @Override
@@ -70,9 +85,7 @@ public class MainActivity extends AppCompatActivity implements SearchLiveo.OnSea
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
             if (requestCode == SearchLiveo.REQUEST_CODE_SPEECH_INPUT) {
-                if (mSearchLiveo != null) {
-                    mSearchLiveo.resultVoice(requestCode, resultCode, data);
-                }
+                mBinding.searchLiveo.resultVoice(requestCode, resultCode, data);
             }
         }
     }

@@ -65,10 +65,11 @@ public class SearchLiveo extends FrameLayout {
 
     private boolean voice = true;
     private boolean active = false;
+    private boolean hideKeyboard = false;
     private boolean imeActionSearch = false;
 
     private int mColorIcon = -1;
-    private int mMinToSearch = 3;
+    private int mMinToSearch = 4;
     private int mSearchDelay = 800;
 
     private int mColorIconArrow = R.color.search_liveo_icon;
@@ -283,6 +284,16 @@ public class SearchLiveo extends FrameLayout {
     }
 
     /**
+     * Hiding the keyboard as soon as you finish it
+     *
+     *
+     */
+    public SearchLiveo hideKeyboardAfterSearch() {
+        this.hideKeyboard = true;
+        return this;
+    }
+
+    /**
      * Time in milliseconds of delay. Only after the given time will the search be made.
      *
      * @param delay default 800
@@ -293,9 +304,20 @@ public class SearchLiveo extends FrameLayout {
     }
 
     /**
+     * Remove search delay
+     *
+     *
+     */
+    public SearchLiveo removeSearchDelay() {
+        this.mSearchDelay = 0;
+        return this;
+    }
+
+
+    /**
      * Minimum number of characters to start the search
      *
-     * @param minToSearch default > 3
+     * @param minToSearch default >= 4
      */
     public SearchLiveo minToSearch(int minToSearch) {
         this.mMinToSearch = minToSearch;
@@ -657,7 +679,7 @@ public class SearchLiveo extends FrameLayout {
                 return;
             }
 
-            if (s.length() > mMinToSearch) {
+            if (s.length() >= mMinToSearch) {
 
                 mTimer = new Timer();
                 mTimer.schedule(new TimerTask() {
@@ -674,7 +696,9 @@ public class SearchLiveo extends FrameLayout {
                                         mSearchListener.changedSearch(queryText());
                                     }
 
-                                    hideKeybord();
+                                    if (hideKeyboard) {
+                                        hideKeybord();
+                                    }
                                 }
                             });
                         }
