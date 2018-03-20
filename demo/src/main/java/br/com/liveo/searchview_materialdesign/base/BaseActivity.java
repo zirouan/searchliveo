@@ -15,9 +15,6 @@ import br.com.liveo.searchview_materialdesign.R;
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
-    public static boolean mIsTablet;
-    public static boolean mIsLandscape;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

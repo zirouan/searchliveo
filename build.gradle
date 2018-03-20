@@ -6,6 +6,7 @@ ext {
 
     gsonVersion = '2.8.2'
 
+    playServiceVersion = '11.8.0'
     supportLibraryVersion = '27.1.0'
     constraintLayoutVersion = '1.0.2'
 }
