@@ -1,5 +1,10 @@
 # SearchLiveo [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SearchLiveo-blue.svg?style=flat)](https://android-arsenal.com/details/1/6841)&nbsp;[![](https://jitpack.io/v/rudsonlive/searchliveo.svg)](https://jitpack.io/#rudsonlive/searchliveo)&nbsp;[![API](https://img.shields.io/badge/API-18%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=18)
 
+<a href="https://play.google.com/store/apps/details?id=br.com.liveo.searchview_materialdesign" target="_blank">
+  <img alt="Android app on Google Play"
+       src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
+</a>
+
 <br>
 Library SearchView material design
 <br>
