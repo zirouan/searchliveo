@@ -77,7 +77,18 @@ dependencies {
     }).
   build();
 ```
-
+<b>Step 6</b> - If you enable voice search, use this.
+```java
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+      super.onActivityResult(requestCode, resultCode, data);
+      if (data != null) {
+          if (requestCode == SearchLiveo.REQUEST_CODE_SPEECH_INPUT) {
+              mBinding.searchLiveo.resultVoice(requestCode, resultCode, data);
+          }
+      }
+  }
+```
 # License
 ```
 Copyright 2018 Rudson Lima
